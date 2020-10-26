@@ -26,10 +26,14 @@ if not os.path.exists(save_dir):
     os.makedirs(save_dir)
 
 # Image processing
+#transform = transforms.Compose([
+#                transforms.ToTensor(),
+#                transforms.Normalize(mean=(0.5, 0.5, 0.5),   # 3 for RGB channels
+#                                     std=(0.5, 0.5, 0.5))])
 transform = transforms.Compose([
                 transforms.ToTensor(),
-                transforms.Normalize(mean=(0.5, 0.5, 0.5),   # 3 for RGB channels
-                                     std=(0.5, 0.5, 0.5))])
+                transforms.Normalize(mean=(0.5,),   # 3 for RGB channels
+                                     std=(0.5,))])
 
 # MNIST dataset
 mnist = torchvision.datasets.MNIST(root='./data/',
@@ -142,15 +146,15 @@ for epoch in range(num_epochs):
         # =================================================================== #
         #                          Update Statistics                          #
         # =================================================================== #
-        d_losses[epoch] = d_losses[epoch]*(i/(i+1.)) + d_loss.data[0]*(1./(i+1.))
-        g_losses[epoch] = g_losses[epoch]*(i/(i+1.)) + g_loss.data[0]*(1./(i+1.))
-        real_scores[epoch] = real_scores[epoch]*(i/(i+1.)) + real_score.mean().data[0]*(1./(i+1.))
-        fake_scores[epoch] = fake_scores[epoch]*(i/(i+1.)) + fake_score.mean().data[0]*(1./(i+1.))
+        d_losses[epoch] = d_losses[epoch]*(i/(i+1.)) + d_loss.item()*(1./(i+1.))
+        g_losses[epoch] = g_losses[epoch]*(i/(i+1.)) + g_loss.item()*(1./(i+1.))
+        real_scores[epoch] = real_scores[epoch]*(i/(i+1.)) + real_score.mean().item()*(1./(i+1.))
+        fake_scores[epoch] = fake_scores[epoch]*(i/(i+1.)) + fake_score.mean().item()*(1./(i+1.))
         
         if (i+1) % 200 == 0:
             print('Epoch [{}/{}], Step [{}/{}], d_loss: {:.4f}, g_loss: {:.4f}, D(x): {:.2f}, D(G(z)): {:.2f}' 
-                  .format(epoch, num_epochs, i+1, total_step, d_loss.data[0], g_loss.data[0], 
-                          real_score.mean().data[0], fake_score.mean().data[0]))
+                  .format(epoch, num_epochs, i+1, total_step, d_loss.item(), g_loss.item(), 
+                          real_score.mean().item(), fake_score.mean().item()))
     
     # Save real images
     if (epoch+1) == 1:
